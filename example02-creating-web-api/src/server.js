@@ -1,11 +1,32 @@
+import { randomUUID } from 'node:crypto'
 import http from 'node:http'
 import { Readable } from 'node:stream'
 
+
+function * run() {
+  for(let index=0; index<= 99; index++) {
+    const data = {
+      id: randomUUID(),
+      name: `Mateus-${index}`,
+      at: Date.now()
+    }
+    yield data
+  }
+}
+
 function handler(request, response) {
+  // const readableStream = Readable({
+  //   read() {
+  //     this.push('hello')
+  //     this.push('world')
+  //     this.push(null)
+  //   }
+  // })
   const readableStream = Readable({
     read() {
-      this.push('hello')
-      this.push('world')
+      for(const data of run()) {
+        this.push(JSON.stringify(data).concat('\n'))
+      }
       this.push(null)
     }
   })
